@@ -10,8 +10,8 @@ import styles from './styles.module.sass';
 class Main extends PureComponent {
   render() {
     return [
-      <Theme />,
-      <div className={cx('Main', styles.component)}>
+      <Theme key='main-theme' />,
+      <div  key='main-content' className={cx('Main', styles.component)}>
         <div>
           <Header/>
           <Route component={Body}/>
