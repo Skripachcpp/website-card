@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import modal from './modal';
 
-const rootReducer = combineReducser({
+const rootReducer = combineReducers({
   modal
 });
 
