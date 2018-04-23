@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import styles from './styles.module.sass';
-import Button from '../../common/Button';
+import Button from '../Button/index';
 import cx from 'classnames';
 import {Link} from 'react-router-dom';
 

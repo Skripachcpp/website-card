@@ -4,9 +4,9 @@ import cx from 'classnames';
 import Header from 'components/layout/Header';
 import Footer from 'components/layout/Footer';
 import Body from 'components/layout/Body';
-import Theme from 'components/layout/Theme';
-import Bootstrap from 'components/layout/Bootstrap';
-import Modal from 'components/layout/Modal';
+import Theme from 'components/global/Theme';
+import Bootstrap from 'components/global/Bootstrap';
+import {Modal} from 'components/common/Modal';
 import styles from './styles.module.sass';
 
 class Main extends PureComponent {

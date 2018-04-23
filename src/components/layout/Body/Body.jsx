@@ -1,11 +1,11 @@
 import React, {PureComponent} from 'react';
 import {Switch, Route} from 'react-router-dom';
 import cx from 'classnames';
-import Contact from 'components/page/Contact';
-import Home from 'components/page/Home';
-import Info from 'components/page/Info';
-import Portfolio from 'components/page/Portfolio';
-import Price from 'components/page/Price';
+import Contact from 'components/page/Contact/index';
+import Home from 'components/page/Home/index';
+import Info from 'components/page/Info/index';
+import Portfolio from 'components/page/Portfolio/index';
+import Price from 'components/page/Price/index';
 import styles from './styles.module.sass';
 
 class Body extends PureComponent {

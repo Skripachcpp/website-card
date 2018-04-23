@@ -1,6 +1,6 @@
 import React from 'react';
 import cx from 'classnames';
-import Theme from 'components/layout/Theme';
+import Theme from 'components/global/Theme';
 import Icon from '../Icon';
 import image from './img/email.png';
 import styles from './styles.module.sass';

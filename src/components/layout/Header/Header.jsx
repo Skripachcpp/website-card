@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react';
 import cx from 'classnames';
-import Navigation from 'components/layout/Navigation'
+import Navigation from 'components/common/Navigation'
 import styles from './styles.module.sass';
 
 class Header extends PureComponent {

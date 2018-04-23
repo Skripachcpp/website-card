@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import Media from 'react-media';
 import cx from 'classnames';
-import Navigation from 'components/layout/Navigation/index'
+import Navigation from 'components/common/Navigation/index'
 import {Email, Vk} from 'components/common/SocialNetwork';
 import styles from './styles.module.sass'
 

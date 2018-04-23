@@ -1,6 +1,6 @@
 import React from 'react';
 import cx from 'classnames';
-import Theme from 'components/layout/Theme';
+import Theme from 'components/global/Theme';
 import image from './img/vk.png';
 import Icon from '../Icon';
 
