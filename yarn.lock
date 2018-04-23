@@ -2180,7 +2180,7 @@ currently-unhandled@^0.4.1:
   dependencies:
     array-find-index "^1.0.1"
 
-custom-react-scripts@0.2.2:
+custom-react-scripts@^0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/custom-react-scripts/-/custom-react-scripts-0.2.2.tgz#803c2ffdb9e60db796bbd52ddfa8af367dd51799"
   dependencies:
@@ -4644,6 +4644,10 @@ jest@20.0.4:
   resolved "https://registry.yarnpkg.com/jest/-/jest-20.0.4.tgz#3dd260c2989d6dad678b1e9cc4d91944f6d602ac"
   dependencies:
     jest-cli "^20.0.4"
+
+jquery@^3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
 
 js-base64@^2.1.8, js-base64@^2.1.9:
   version "2.4.3"
