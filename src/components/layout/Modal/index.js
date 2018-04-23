@@ -2,7 +2,11 @@ import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
-@connect()
+const mapStateToProps = (state) => ({
+  modal: state.modal
+});
+
+@connect(mapStateToProps)
 export default class Modal extends PureComponent {
   render() {
     if (!this.props.modal.open) return null;

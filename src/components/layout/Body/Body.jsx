@@ -6,11 +6,12 @@ import Home from 'components/page/Home';
 import Info from 'components/page/Info';
 import Portfolio from 'components/page/Portfolio';
 import Price from 'components/page/Price';
+import styles from './styles.module.sass';
 
 class Body extends PureComponent {
   render() {
     return (
-      <div className={cx('Body')}>
+      <div className={cx('Body', styles.box)}>
         <Switch>
           <Route path='/info' component={Info}/>
           <Route path='/portfolio' component={Portfolio}/>
