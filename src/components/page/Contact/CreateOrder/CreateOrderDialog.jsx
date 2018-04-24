@@ -9,6 +9,11 @@ import styles from './styles.module.sass';
 
 @connect()
 export default class CreateOrderDialog extends PureComponent {
+  state = {
+    email: '',
+    message: '',
+  };
+
   render() {
     return(
       <div className={cx('CreateOrderDialog', styles.createOrderDialog)}>
@@ -20,13 +25,22 @@ export default class CreateOrderDialog extends PureComponent {
         <div className={cx('form-group row')}>
           <label className={'col-12 label300'} for='input-email'>Ваша почта:</label>
           <div className={'col-12'}>
-            <TextInput id='input-email' />
+            <TextInput
+              id='input-email'
+              value={this.state.email}
+              onChange={(e) => this.setState({email: e.value})}
+            />
           </div>
         </div>
         <div className={cx('form-group row')}>
           <label className={'col-12 label300'} for='input-message'>Сообщение</label>
           <div className={'col-12'}>
-            <Text rows={10} id='input-message' />
+            <Text
+              value={this.state.message}
+              onChange={(e) => this.setState({message: e.value})}
+              rows={10}
+              id='input-message'
+            />
           </div>
         </div>
         <div className={styles.btnBox}>

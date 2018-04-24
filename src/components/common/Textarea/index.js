@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 
@@ -7,12 +7,12 @@ export default class Text extends PureComponent {
     value: undefined
   };
 
-  onChange(e) {
-    const { onChange } = this.props;
+  onChange = (e) => {
+    const {onChange} = this.props;
     const value = e.target.value;
-    this.setState({ value });
-    if (onChange) onChange(value);
-  }
+    this.setState({value});
+    if (onChange) onChange({value});
+  };
 
   render() {
     const value = this.props.value !== undefined
@@ -26,8 +26,8 @@ export default class Text extends PureComponent {
         id={this.props.id}
         name={this.props.name}
         rows={this.props.rows}
-        className={cx('Textarea form-control', this.props.className)}
-        onChange={::this.onChange}
+        className={cx('Text form-control', this.props.className)}
+        onChange={this.onChange}
         value={value}
       />
     );
