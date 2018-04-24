@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {modalHide} from 'actions/modal';
 import cx from 'classnames';
 import TextInput from 'components/common/TextInput';
-import Text from 'components/common/Textarea';
+import Text from 'components/common/Text';
 import styles from './styles.module.sass';
 
 
@@ -12,6 +12,11 @@ export default class CreateOrderDialog extends PureComponent {
   state = {
     email: '',
     message: '',
+  };
+
+  onSubmit = () => {
+    const {email, message} = this.state;
+
   };
 
   render() {
@@ -28,6 +33,7 @@ export default class CreateOrderDialog extends PureComponent {
             <TextInput
               id='input-email'
               value={this.state.email}
+              pla
               onChange={(e) => this.setState({email: e.value})}
             />
           </div>
@@ -40,6 +46,7 @@ export default class CreateOrderDialog extends PureComponent {
               onChange={(e) => this.setState({message: e.value})}
               rows={10}
               id='input-message'
+              placeholder={'Отправить сообщение ... '}
             />
           </div>
         </div>
@@ -51,6 +58,7 @@ export default class CreateOrderDialog extends PureComponent {
             Отмена
           </div>
           <div
+            onClick={this.onSubmit}
             className={cx('btn btn-primary', styles.btnOk)}
           >
             Отправить

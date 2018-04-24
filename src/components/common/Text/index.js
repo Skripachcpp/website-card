@@ -29,6 +29,7 @@ export default class Text extends PureComponent {
         className={cx('Text form-control', this.props.className)}
         onChange={this.onChange}
         value={value}
+        placeholder={this.props.placeholder}
       />
     );
   }
@@ -42,6 +43,7 @@ Text.propTypes = {
   name: PropTypes.string,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   defaultValue: PropTypes.bool,
+  placeholder: PropTypes.string,
 
   onChange: PropTypes.func,
 };

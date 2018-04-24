@@ -29,6 +29,7 @@ class TextInput extends PureComponent {
         type="text"
         onChange={::this.onChange}
         value={value}
+        placeholder={this.props.placeholder}
       />
     );
   }
@@ -41,6 +42,7 @@ TextInput.propTypes = {
   name: PropTypes.string,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   defaultValue: PropTypes.bool,
+  placeholder: PropTypes.string,
 
   onChange: PropTypes.func,
 };
