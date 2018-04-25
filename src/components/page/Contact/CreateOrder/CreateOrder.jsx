@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import cx from 'classnames';
 import styles from './styles.module.sass';
-import {ModalShow} from 'components/common/Modal'
+import {ModalShow} from 'components/global/Modal'
 import CreateOrderDialog from './CreateOrderDialog';
 
 export default class CreateOrder extends PureComponent {
@@ -12,7 +12,6 @@ export default class CreateOrder extends PureComponent {
           <ModalShow
             className={cx('btn btn-primary', styles.btn)}
             component={<CreateOrderDialog />}
-            defaultShow={true}
           >
             Оставить заявку
           </ModalShow>

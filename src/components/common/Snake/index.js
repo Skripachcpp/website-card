@@ -1,4 +1,5 @@
 import React, {PureComponent} from 'react';
+import {connect} from 'react-redux';
 import styles from './styles.module.sass';
 
 const SNAKE_HEADER = 'SNAKE_HEADER';
@@ -13,6 +14,11 @@ const SNAKE_GO_DOWN = 'SNAKE_GO_DOWN';
 const SNAKE_GO_LEFT = 'SNAKE_GO_LEFT';
 const SNAKE_GO_RIGHT = 'SNAKE_GO_RIGHT';
 
+const mapStateToProps = (state) => ({
+  keyboard: state.keyboard
+});
+
+@connect(mapStateToProps)
 class Matrix extends PureComponent {
   state = {
     snake: {
@@ -159,13 +165,38 @@ class Matrix extends PureComponent {
   };
 
   timerSnakeGoId;
+
   componentWillMount() {
-    this.timerSnakeGoId = setInterval(this.snakeGo, 2000);
+    this.timerSnakeGoId = setInterval(this.snakeGo, 500);
   }
 
   componentWillUnmount() {
     clearInterval(this.timerSnakeGoId);
   }
+
+  componentWillReceiveProps(nextProps) {
+    const {keyboard: {keyCode: newKeyCode}} = nextProps;
+    const {keyboard: {keyCode: oldKeyCode}} = this.props;
+
+    if (newKeyCode !== oldKeyCode) {
+      console.log('newKeyCode', newKeyCode);
+      switch (newKeyCode) {
+        case 87:
+          this.data.vector = SNAKE_GO_UP;
+          break;
+        case 65:
+          this.data.vector = SNAKE_GO_LEFT;
+          break;
+        case 83:
+          this.data.vector = SNAKE_GO_DOWN;
+          break;
+        case 68:
+          this.data.vector = SNAKE_GO_RIGHT;
+          break;
+      }
+    }
+  }
+
 
   render() {
     const {area} = this.state;
@@ -175,31 +206,26 @@ class Matrix extends PureComponent {
 
     return (
       <div>
+        <div className={styles.table}>
+          {Object.keys(area).map(y => (
+            <div key={`${y}`} className={styles.row}>
+              {Object.keys(area[y]).map(x => (
+                <div key={`${y}_${x}`} className={styles.cell}>
+                  {this.renderCell(y, x, snakeAreaHash, appleAreaHash)}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
         <div className={styles.wasdBox}>
           <div className={styles.wBox}>
-            <div  className={styles.wasdBtn} onClick={() => this.snakeGoLazily(SNAKE_GO_UP)}>W</div>
+            <div className={styles.wasdBtn} onClick={() => this.snakeGoLazily(SNAKE_GO_UP)}>W</div>
           </div>
           <div className={styles.asdBox}>
             <div className={styles.wasdBtn} onClick={() => this.snakeGoLazily(SNAKE_GO_LEFT)}>A</div>
             <div className={styles.wasdBtn} onClick={() => this.snakeGoLazily(SNAKE_GO_DOWN)}>S</div>
             <div className={styles.wasdBtn} onClick={() => this.snakeGoLazily(SNAKE_GO_RIGHT)}>D</div>
           </div>
-        </div>
-
-        <div className={styles.table}>
-          {
-            Object.keys(area).map(y => (
-              <div key={`${y}`} className={styles.row}>
-                {
-                  Object.keys(area[y]).map(x => (
-                    <div key={`${y}_${x}`} className={styles.cell}>
-                      {this.renderCell(y, x, snakeAreaHash, appleAreaHash)}
-                    </div>
-                  ))
-                }
-              </div>
-            ))
-          }
         </div>
       </div>
     )

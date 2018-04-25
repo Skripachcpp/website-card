@@ -19,7 +19,8 @@
     "react-media": "^1.8.0",
     "react-bootstrap4-modal": "^1.2.2",
     "bootstrap": "^4.1.0",
-    "jquery": "^3.3.1"
+    "jquery": "^3.3.1",
+    "react-keydown": "^1.9.7"
   },
   "scripts": {
     "start": "react-scripts start",
