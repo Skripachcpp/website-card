@@ -51,6 +51,10 @@ class Matrix extends PureComponent {
     }
   };
 
+  data = {
+    vector: SNAKE_GO_UP
+  };
+
   getSnakeAreaHash = () => {
     const {snake} = this.state;
     const keys = Object.keys(snake);
@@ -106,6 +110,8 @@ class Matrix extends PureComponent {
   };
 
   snakeGo = (code) => {
+    if (!code) code = this.data.vector;
+
     const snake = {...this.state.snake};
 
     const appleAreaHash = this.getAppleAreaHash();
@@ -144,9 +150,18 @@ class Matrix extends PureComponent {
       }
     });
 
+    this.data.vector = code;
     this.setState({snake});
   };
 
+  timerSnakeGoId;
+  componentWillMount() {
+    this.timerSnakeGoId = setInterval(this.snakeGo, 2000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerSnakeGoId);
+  }
 
   render() {
     const {area} = this.state;
