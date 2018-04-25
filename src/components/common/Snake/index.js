@@ -89,10 +89,10 @@ class Matrix extends PureComponent {
       switch (snakeAreaHash[y][x].code) {
         case SNAKE_HEADER:
           return <div className={styles.element}>h</div>;
-        case SNAKE_BODY:
-          return <div className={styles.element}>b</div>;
         case SNAKE_TAIL:
           return <div className={styles.element}>t</div>;
+        case SNAKE_BODY:
+          return <div className={styles.element}>b</div>;
         case APPLE :
           return <div className={styles.element}>a</div>
       }
@@ -107,6 +107,15 @@ class Matrix extends PureComponent {
 
   snakeGo = (code) => {
     const snake = {...this.state.snake};
+
+    const appleAreaHash = this.getAppleAreaHash();
+    const head = snake[0];
+    const length = Object.keys(snake).length;
+    if (appleAreaHash[head.y] && appleAreaHash[head.y][head.x]) {
+      snake[length] = {};
+      this.setState({apple: {...this.state.apple, x: 7, y: 2}});
+    }
+
     let parentBlock;
     Object.keys(snake).forEach(key => {
       const block = snake[key];
