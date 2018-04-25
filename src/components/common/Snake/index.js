@@ -21,8 +21,8 @@ class Matrix extends PureComponent {
       }
     },
     apple: {
-      y: 1,
-      x: 1,
+      y: 2,
+      x: 2,
     },
     area: {
       0: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '',},
@@ -68,7 +68,7 @@ class Matrix extends PureComponent {
     const y = apple.y;
     const x = apple.x;
 
-    return {[x]: {[y]: {code: APPLE}}};
+    return {[y]: {[x]: {code: APPLE}}};
   };
 
   renderCell = (y, x, snakeAreaHash, appleAreaHash) => {
@@ -88,17 +88,6 @@ class Matrix extends PureComponent {
     } else if(appleAreaHash[y] && appleAreaHash[y][x]){
       return <div className={styles.element}>a</div>
     }
-
-    // switch (elementCode) {
-    //   case SNAKE_HEADER:
-    //     return <div className={styles.element}>h</div>;
-    //   case SNAKE_BODY:
-    //     return <div className={styles.element}>b</div>;
-    //   case SNAKE_TAIL:
-    //     return <div className={styles.element}>t</div>;
-    //   case APPLE :
-    //     return <div className={styles.element}>a</div>
-    // }
 
     return <div className={styles.element}>-</div>;
   };
