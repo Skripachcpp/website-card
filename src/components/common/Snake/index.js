@@ -109,6 +109,10 @@ class Matrix extends PureComponent {
     return <div className={styles.element}>-</div>;
   };
 
+  snakeGoLazily = (code) => {
+    this.data.vector = code;
+  };
+
   snakeGo = (code) => {
     if (!code) code = this.data.vector;
 
@@ -171,12 +175,12 @@ class Matrix extends PureComponent {
 
     return (
       <div>
-        <div onClick={() => this.snakeGo(SNAKE_GO_UP)}>SNAKE_GO_UP</div>
-        <div onClick={() => this.snakeGo(SNAKE_GO_DOWN)}>SNAKE_GO_DOWN</div>
-        <div onClick={() => this.snakeGo(SNAKE_GO_LEFT)}>SNAKE_GO_LEFT</div>
-        <div onClick={() => this.snakeGo(SNAKE_GO_RIGHT)}>SNAKE_GO_RIGHT</div>
+        <div onClick={() => this.snakeGoLazily(SNAKE_GO_UP)}>SNAKE_GO_UP</div>
+        <div onClick={() => this.snakeGoLazily(SNAKE_GO_DOWN)}>SNAKE_GO_DOWN</div>
+        <div onClick={() => this.snakeGoLazily(SNAKE_GO_LEFT)}>SNAKE_GO_LEFT</div>
+        <div onClick={() => this.snakeGoLazily(SNAKE_GO_RIGHT)}>SNAKE_GO_RIGHT</div>
 
-        <div onClick={this.snakeGo} className={styles.table}>
+        <div className={styles.table}>
           {
             Object.keys(area).map(y => (
               <div key={`${y}`} className={styles.row}>
