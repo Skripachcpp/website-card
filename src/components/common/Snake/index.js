@@ -175,10 +175,16 @@ class Matrix extends PureComponent {
 
     return (
       <div>
-        <div onClick={() => this.snakeGoLazily(SNAKE_GO_UP)}>SNAKE_GO_UP</div>
-        <div onClick={() => this.snakeGoLazily(SNAKE_GO_DOWN)}>SNAKE_GO_DOWN</div>
-        <div onClick={() => this.snakeGoLazily(SNAKE_GO_LEFT)}>SNAKE_GO_LEFT</div>
-        <div onClick={() => this.snakeGoLazily(SNAKE_GO_RIGHT)}>SNAKE_GO_RIGHT</div>
+        <div className={styles.wasdBox}>
+          <div className={styles.wBox}>
+            <div  className={styles.wasdBtn} onClick={() => this.snakeGoLazily(SNAKE_GO_UP)}>W</div>
+          </div>
+          <div className={styles.asdBox}>
+            <div className={styles.wasdBtn} onClick={() => this.snakeGoLazily(SNAKE_GO_LEFT)}>A</div>
+            <div className={styles.wasdBtn} onClick={() => this.snakeGoLazily(SNAKE_GO_DOWN)}>S</div>
+            <div className={styles.wasdBtn} onClick={() => this.snakeGoLazily(SNAKE_GO_RIGHT)}>D</div>
+          </div>
+        </div>
 
         <div className={styles.table}>
           {
