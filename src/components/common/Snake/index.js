@@ -92,6 +92,34 @@ class Matrix extends PureComponent {
     return <div className={styles.element}>-</div>;
   };
 
+  snakeGo = () => {
+    const snake = {...this.state.snake};
+    let parentBlock;
+    Object.keys(snake).forEach(key => {
+      const block = snake[key];
+
+      if (!parentBlock) {
+        parentBlock = {y: block.y, x: block.x};
+
+        block.y = block.y + 1;
+        // block.x = block.x + 1;
+
+      } else {
+        const y = parentBlock.y;
+        const x = parentBlock.x;
+
+        parentBlock.y = block.y;
+        parentBlock.x = block.x;
+
+        block.y = y;
+        block.x = x;
+      }
+    });
+
+    this.setState({snake});
+  };
+
+
   render() {
     const {area} = this.state;
 
@@ -99,7 +127,7 @@ class Matrix extends PureComponent {
     const appleAreaHash = this.getAppleAreaHash();
 
     return (
-      <div className={styles.table}>
+      <div onClick={this.snakeGo} className={styles.table}>
         {
           Object.keys(area).map(y => (
             <div key={`${y}`} className={styles.row}>
