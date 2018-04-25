@@ -8,17 +8,30 @@ const SNAKE_TAIL = 'SNAKE_TAIL';
 const APPLE = 'APPLE';
 
 
+const SNAKE_GO_UP = 'SNAKE_GO_UP';
+const SNAKE_GO_DOWN = 'SNAKE_GO_DOWN';
+const SNAKE_GO_LEFT = 'SNAKE_GO_LEFT';
+const SNAKE_GO_RIGHT = 'SNAKE_GO_RIGHT';
+
 class Matrix extends PureComponent {
   state = {
     snake: {
       0: {
-        y: 0,
-        x: 1,
+        y: 4,
+        x: 4,
       },
       1: {
-        y: 0,
-        x: 0,
-      }
+        y: 4,
+        x: 3,
+      },
+      2: {
+        y: 4,
+        x: 2,
+      },
+      3: {
+        y: 4,
+        x: 1,
+      },
     },
     apple: {
       y: 2,
@@ -85,14 +98,14 @@ class Matrix extends PureComponent {
       }
 
       return <div className={styles.element}>s</div>;
-    } else if(appleAreaHash[y] && appleAreaHash[y][x]){
+    } else if (appleAreaHash[y] && appleAreaHash[y][x]) {
       return <div className={styles.element}>a</div>
     }
 
     return <div className={styles.element}>-</div>;
   };
 
-  snakeGo = () => {
+  snakeGo = (code) => {
     const snake = {...this.state.snake};
     let parentBlock;
     Object.keys(snake).forEach(key => {
@@ -101,8 +114,14 @@ class Matrix extends PureComponent {
       if (!parentBlock) {
         parentBlock = {y: block.y, x: block.x};
 
-        block.y = block.y + 1;
-        // block.x = block.x + 1;
+        if (code === SNAKE_GO_UP)
+          block.y = block.y - 1;
+        else if (code === SNAKE_GO_DOWN)
+          block.y = block.y + 1;
+        else if (code === SNAKE_GO_LEFT)
+          block.x = block.x - 1;
+        else if (code === SNAKE_GO_RIGHT)
+          block.x = block.x + 1;
 
       } else {
         const y = parentBlock.y;
@@ -127,20 +146,27 @@ class Matrix extends PureComponent {
     const appleAreaHash = this.getAppleAreaHash();
 
     return (
-      <div onClick={this.snakeGo} className={styles.table}>
-        {
-          Object.keys(area).map(y => (
-            <div key={`${y}`} className={styles.row}>
-              {
-                Object.keys(area[y]).map(x => (
-                  <div  key={`${y}_${x}`} className={styles.cell}>
-                    {this.renderCell(y, x, snakeAreaHash, appleAreaHash)}
-                  </div>
-                ))
-              }
-            </div>
-          ))
-        }
+      <div>
+        <div onClick={() => this.snakeGo(SNAKE_GO_UP)}>SNAKE_GO_UP</div>
+        <div onClick={() => this.snakeGo(SNAKE_GO_DOWN)}>SNAKE_GO_DOWN</div>
+        <div onClick={() => this.snakeGo(SNAKE_GO_LEFT)}>SNAKE_GO_LEFT</div>
+        <div onClick={() => this.snakeGo(SNAKE_GO_RIGHT)}>SNAKE_GO_RIGHT</div>
+
+        <div onClick={this.snakeGo} className={styles.table}>
+          {
+            Object.keys(area).map(y => (
+              <div key={`${y}`} className={styles.row}>
+                {
+                  Object.keys(area[y]).map(x => (
+                    <div key={`${y}_${x}`} className={styles.cell}>
+                      {this.renderCell(y, x, snakeAreaHash, appleAreaHash)}
+                    </div>
+                  ))
+                }
+              </div>
+            ))
+          }
+        </div>
       </div>
     )
   }
