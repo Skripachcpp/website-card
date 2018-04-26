@@ -29,26 +29,41 @@ class Matrix extends PureComponent {
     appleAreaHash: {},
   };
 
+  static defaultSnake() {
+    const SNAKE_DEFAULT_LENGTH = 4; // >= 3
+    const SNAKE_DEFAULT_Y = 10;
+    const SNAKE_DEFAULT_X = 10;
+    const snake = [];
+
+    let parent;
+    for (let i = 0; i < SNAKE_DEFAULT_LENGTH; i++) {
+      const block = {y: SNAKE_DEFAULT_Y + i, x: SNAKE_DEFAULT_X, code: SNAKE_BODY};
+
+      if (parent) {
+        block.parent = parent;
+        parent.children = block;
+      }
+
+      block.code = SNAKE_BODY;
+
+      parent = block;
+      snake.push(block)
+    }
+
+    let first = snake[0];
+    let last = snake[snake.length - 1];
+
+    first.code = SNAKE_HEADER;
+    last.code = SNAKE_TAIL;
+
+    first.last = last;
+
+    return snake;
+  }
+
   data = {
     vector: SNAKE_GO_UP,
-    snake: {
-      0: {
-        y: 4,
-        x: 4,
-      },
-      1: {
-        y: 4,
-        x: 3,
-      },
-      2: {
-        y: 4,
-        x: 2,
-      },
-      3: {
-        y: 4,
-        x: 1,
-      },
-    },
+    snake: Matrix.defaultSnake(),
     apple: {
       y: 2,
       x: 2,
@@ -58,25 +73,15 @@ class Matrix extends PureComponent {
   getSnakeAreaHash = (snake) => {
     if (snake === undefined) snake = this.data.snake;
 
-    const keys = Object.keys(snake);
     const areaHash = {};
-
-    let first;
-    let last;
-    keys.forEach(key => {
-      const block = snake[key];
+    let block = snake[0];
+    while (block) {
       const y = block.y;
       const x = block.x;
 
-      const element = {code: SNAKE_BODY};
-      if (!first) first = element;
-      last = element;
-
-      areaHash[y] = {...areaHash[y], [x]: element};
-    });
-
-    if (first) first.code = SNAKE_HEADER;
-    if (last) last.code = SNAKE_TAIL;
+      areaHash[y] = {...areaHash[y], [x]: {code: block.code}};
+      block = block.children;
+    }
 
     return areaHash;
   };
@@ -96,48 +101,57 @@ class Matrix extends PureComponent {
   snakeGo = (code) => {
     if (!code) code = this.data.vector;
 
-    const snake = {...this.data.snake};
+    const snake = this.data.snake;
 
-    const appleAreaHash = this.getAppleAreaHash();
-    const head = snake[0];
-    const length = Object.keys(snake).length;
-    if (appleAreaHash[head.y] && appleAreaHash[head.y][head.x]) {
-      snake[length] = {};
+    const first = snake[0];
+    const firstChildren = first.children;
+    const last = first.last;
+    const lastParent = last.parent;
 
+    const {appleAreaHash} = this.state;
+    if (appleAreaHash[first.y] && appleAreaHash[first.y][first.x]) {
       const apple = this.data.apple;
       this.data.apple = {...apple, y: 5, x: 7};
+
       this.setState({appleAreaHash: this.getAppleAreaHash()});
+
+      const block = {x: first.x, y: first.y, code: SNAKE_BODY};
+      block.parent = first;
+      block.children = firstChildren;
+
+      first.children = block;
+      firstChildren.parent = block;
+
+    } else {
+      last.code = SNAKE_BODY;
+      lastParent.code = SNAKE_TAIL;
+
+      last.y = first.y;
+      last.x = first.x;
+
+      last.parent = first;
+      first.children = last;
+
+      last.children = firstChildren;
+      firstChildren.parent = last;
+
+      lastParent.children = undefined;
+
+      first.last = lastParent;
     }
 
-    let parentBlock;
-    Object.keys(snake).forEach(key => {
-      const block = snake[key];
+    if (code === SNAKE_GO_UP)
+      first.y = first.y - 1;
+    else if (code === SNAKE_GO_DOWN)
+      first.y = first.y + 1;
+    else if (code === SNAKE_GO_LEFT)
+      first.x = first.x - 1;
+    else if (code === SNAKE_GO_RIGHT)
+      first.x = first.x + 1;
 
-      if (!parentBlock) {
-        parentBlock = {y: block.y, x: block.x};
-
-        if (code === SNAKE_GO_UP)
-          block.y = block.y - 1;
-        else if (code === SNAKE_GO_DOWN)
-          block.y = block.y + 1;
-        else if (code === SNAKE_GO_LEFT)
-          block.x = block.x - 1;
-        else if (code === SNAKE_GO_RIGHT)
-          block.x = block.x + 1;
-
-      } else {
-        const y = parentBlock.y;
-        const x = parentBlock.x;
-
-        parentBlock.y = block.y;
-        parentBlock.x = block.x;
-
-        block.y = y;
-        block.x = x;
-      }
-    });
 
     this.data.vector = code;
+
     const snakeAreaHash = this.getSnakeAreaHash(snake);
     this.setState({snakeAreaHash});
   };
@@ -145,7 +159,7 @@ class Matrix extends PureComponent {
   timerSnakeGoId;
 
   componentWillMount() {
-    this.timerSnakeGoId = setInterval(this.snakeGo, 500);
+    this.timerSnakeGoId = setInterval(this.snakeGo, 250);
 
     this.setState({snakeAreaHash: this.getSnakeAreaHash()});
     this.setState({appleAreaHash: this.getAppleAreaHash()});
@@ -201,7 +215,7 @@ class Matrix extends PureComponent {
   renderCells = (y) => {
     const cells = [];
     for (let x = 0; x < AREA_X; x++) {
-      cells.push(<div key={`${y}_${x}`} className={cx(styles.cell, this.renderCellClassName(y, x))} />)
+      cells.push(<div key={`${y}_${x}`} className={cx(styles.cell, this.renderCellClassName(y, x))}/>)
     }
 
     return cells;
