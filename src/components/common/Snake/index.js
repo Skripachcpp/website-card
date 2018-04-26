@@ -1,6 +1,10 @@
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
+import cx from 'classnames';
 import styles from './styles.module.sass';
+
+const AREA_X = 20;
+const AREA_Y = 20;
 
 const SNAKE_HEADER = 'SNAKE_HEADER';
 const SNAKE_BODY = 'SNAKE_BODY';
@@ -21,6 +25,12 @@ const mapStateToProps = (state) => ({
 @connect(mapStateToProps)
 class Matrix extends PureComponent {
   state = {
+    snakeAreaHash: {},
+    appleAreaHash: {},
+  };
+
+  data = {
+    vector: SNAKE_GO_UP,
     snake: {
       0: {
         y: 4,
@@ -43,26 +53,11 @@ class Matrix extends PureComponent {
       y: 2,
       x: 2,
     },
-    area: {
-      0: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '',},
-      1: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '',},
-      2: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '',},
-      3: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '',},
-      4: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '',},
-      5: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '',},
-      6: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '',},
-      7: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '',},
-      8: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '',},
-      9: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '',},
-    }
   };
 
-  data = {
-    vector: SNAKE_GO_UP
-  };
+  getSnakeAreaHash = (snake) => {
+    if (snake === undefined) snake = this.data.snake;
 
-  getSnakeAreaHash = () => {
-    const {snake} = this.state;
     const keys = Object.keys(snake);
     const areaHash = {};
 
@@ -86,33 +81,12 @@ class Matrix extends PureComponent {
     return areaHash;
   };
 
-  getAppleAreaHash = () => {
-    const {apple} = this.state;
+  getAppleAreaHash = (apple) => {
+    if (apple === undefined) apple = this.data.apple;
     const y = apple.y;
     const x = apple.x;
 
     return {[y]: {[x]: {code: APPLE}}};
-  };
-
-  renderCell = (y, x, snakeAreaHash, appleAreaHash) => {
-    if (snakeAreaHash[y] && snakeAreaHash[y][x]) {
-      switch (snakeAreaHash[y][x].code) {
-        case SNAKE_HEADER:
-          return <div className={styles.element}>h</div>;
-        case SNAKE_TAIL:
-          return <div className={styles.element}>t</div>;
-        case SNAKE_BODY:
-          return <div className={styles.element}>b</div>;
-        case APPLE :
-          return <div className={styles.element}>a</div>
-      }
-
-      return <div className={styles.element}>s</div>;
-    } else if (appleAreaHash[y] && appleAreaHash[y][x]) {
-      return <div className={styles.element}>a</div>
-    }
-
-    return <div className={styles.element}>-</div>;
   };
 
   snakeGoLazily = (code) => {
@@ -122,14 +96,17 @@ class Matrix extends PureComponent {
   snakeGo = (code) => {
     if (!code) code = this.data.vector;
 
-    const snake = {...this.state.snake};
+    const snake = {...this.data.snake};
 
     const appleAreaHash = this.getAppleAreaHash();
     const head = snake[0];
     const length = Object.keys(snake).length;
     if (appleAreaHash[head.y] && appleAreaHash[head.y][head.x]) {
       snake[length] = {};
-      this.setState({apple: {...this.state.apple, x: 7, y: 2}});
+
+      const apple = this.data.apple;
+      this.data.apple = {...apple, y: 5, x: 7};
+      this.setState({appleAreaHash: this.getAppleAreaHash()});
     }
 
     let parentBlock;
@@ -161,13 +138,17 @@ class Matrix extends PureComponent {
     });
 
     this.data.vector = code;
-    this.setState({snake});
+    const snakeAreaHash = this.getSnakeAreaHash(snake);
+    this.setState({snakeAreaHash});
   };
 
   timerSnakeGoId;
 
   componentWillMount() {
     this.timerSnakeGoId = setInterval(this.snakeGo, 500);
+
+    this.setState({snakeAreaHash: this.getSnakeAreaHash()});
+    this.setState({appleAreaHash: this.getAppleAreaHash()});
   }
 
   componentWillUnmount() {
@@ -197,25 +178,49 @@ class Matrix extends PureComponent {
     }
   }
 
+  renderCellClassName(y, x) {
+    const {snakeAreaHash, appleAreaHash} = this.state;
+    if (snakeAreaHash[y] && snakeAreaHash[y][x]) {
+      switch (snakeAreaHash[y][x].code) {
+        case SNAKE_HEADER:
+          return styles.snakeHeader;
+        case SNAKE_TAIL:
+          return styles.snakeTail;
+        case SNAKE_BODY:
+          return styles.snakeBody;
+      }
+
+      return styles.empty;
+    } else if (appleAreaHash[y] && appleAreaHash[y][x]) {
+      return styles.apple;
+    }
+
+    return styles.empty;
+  }
+
+  renderCells = (y) => {
+    const cells = [];
+    for (let x = 0; x < AREA_X; x++) {
+      cells.push(<div key={`${y}_${x}`} className={cx(styles.cell, this.renderCellClassName(y, x))} />)
+    }
+
+    return cells;
+  };
+
+  renderRows = () => {
+    const rows = [];
+    for (let y = 0; y < AREA_Y; y++) {
+      rows.push(<div key={`${y}`} className={styles.row}>{this.renderCells(y)}</div>)
+    }
+
+    return rows;
+  };
 
   render() {
-    const {area} = this.state;
-
-    const snakeAreaHash = this.getSnakeAreaHash();
-    const appleAreaHash = this.getAppleAreaHash();
-
     return (
       <div>
         <div className={styles.table}>
-          {Object.keys(area).map(y => (
-            <div key={`${y}`} className={styles.row}>
-              {Object.keys(area[y]).map(x => (
-                <div key={`${y}_${x}`} className={styles.cell}>
-                  {this.renderCell(y, x, snakeAreaHash, appleAreaHash)}
-                </div>
-              ))}
-            </div>
-          ))}
+          {this.renderRows()}
         </div>
         <div className={styles.wasdBox}>
           <div className={styles.wBox}>
