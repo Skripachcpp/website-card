@@ -12,11 +12,12 @@ const SNAKE_TAIL = 'SNAKE_TAIL';
 
 const APPLE = 'APPLE';
 
-
 const SNAKE_GO_UP = 'SNAKE_GO_UP';
 const SNAKE_GO_DOWN = 'SNAKE_GO_DOWN';
 const SNAKE_GO_LEFT = 'SNAKE_GO_LEFT';
 const SNAKE_GO_RIGHT = 'SNAKE_GO_RIGHT';
+
+const TIK = 250;
 
 const mapStateToProps = (state) => ({
   keyboard: state.keyboard
@@ -30,7 +31,7 @@ class Matrix extends PureComponent {
   };
 
   static defaultSnake() {
-    const SNAKE_DEFAULT_LENGTH = 4; // >= 3
+    const SNAKE_DEFAULT_LENGTH = 3; // >= 3
     const SNAKE_DEFAULT_Y = 10;
     const SNAKE_DEFAULT_X = 10;
     const snake = [];
@@ -98,6 +99,12 @@ class Matrix extends PureComponent {
     this.data.vector = code;
   };
 
+  randomInteger = (min, max) => {
+    let rand = min - 0.5 + Math.random() * (max - min + 1);
+    rand = Math.round(rand);
+    return rand;
+  };
+
   snakeGo = (code) => {
     if (!code) code = this.data.vector;
 
@@ -111,7 +118,9 @@ class Matrix extends PureComponent {
     const {appleAreaHash} = this.state;
     if (appleAreaHash[first.y] && appleAreaHash[first.y][first.x]) {
       const apple = this.data.apple;
-      this.data.apple = {...apple, y: 5, x: 7};
+      const appleY = this.randomInteger(0, AREA_Y);
+      const appleX = this.randomInteger(0, AREA_X);
+      this.data.apple = {...apple, y: appleY, x: appleX};
 
       this.setState({appleAreaHash: this.getAppleAreaHash()});
 
@@ -159,7 +168,7 @@ class Matrix extends PureComponent {
   timerSnakeGoId;
 
   componentWillMount() {
-    this.timerSnakeGoId = setInterval(this.snakeGo, 250);
+    this.timerSnakeGoId = setInterval(this.snakeGo, TIK);
 
     this.setState({snakeAreaHash: this.getSnakeAreaHash()});
     this.setState({appleAreaHash: this.getAppleAreaHash()});
@@ -174,7 +183,6 @@ class Matrix extends PureComponent {
     const {keyboard: {keyCode: oldKeyCode}} = this.props;
 
     if (newKeyCode !== oldKeyCode) {
-      console.log('newKeyCode', newKeyCode);
       switch (newKeyCode) {
         case 87:
           this.data.vector = SNAKE_GO_UP;
