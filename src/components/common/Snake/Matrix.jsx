@@ -159,10 +159,23 @@ class Matrix extends PureComponent {
     else if (code === SNAKE_GO_RIGHT)
       first.x = first.x + 1;
 
+    const snakeAreaHash = this.getSnakeAreaHash(snake);
+    const {onGameOver} = this.props;
+    if (onGameOver) {
+      if (first.y < 0 || first.x < 0)
+        onGameOver();
+      if (first.y >= AREA_Y || first.x >= AREA_X)
+        onGameOver();
+
+      if (snakeAreaHash
+        && snakeAreaHash[first.y]
+        && snakeAreaHash[first.y][first.x]
+        && snakeAreaHash[first.y][first.x].code !== first.code) {
+        onGameOver();
+      }
+    }
 
     this.data.vector = code;
-
-    const snakeAreaHash = this.getSnakeAreaHash(snake);
     this.setState({snakeAreaHash});
   };
 

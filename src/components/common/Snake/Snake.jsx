@@ -24,7 +24,7 @@ class Snake extends PureComponent {
           </div>
         );
       case SNAKE_GAME:
-        return (<Matrix className={styles.gameBox}/>);
+        return (<Matrix onGameOver={() => this.setState({display: SNAKE_GAME_OVER})} className={styles.gameBox}/>);
       case SNAKE_WIN:
         return (<div className={styles.gameBox}>SNAKE_WIN</div>);
       case SNAKE_GAME_OVER:
