@@ -25,10 +25,17 @@ class Snake extends PureComponent {
         );
       case SNAKE_GAME:
         return (<Matrix onGameOver={() => this.setState({display: SNAKE_GAME_OVER})} className={styles.gameBox}/>);
+      case SNAKE_GAME_OVER:
+        return (
+          <div className={cx(styles.gameBox, styles.welcome)} onClick={() => this.setState({display: SNAKE_GAME})}>
+            <div className={styles.labelBox}>
+              <div className={styles.label}><h1>Game over. ¯\_(ツ)_/¯</h1></div>
+              <button className={cx('btn', styles.startGame)}>New game?</button>
+            </div>
+          </div>
+        );
       case SNAKE_WIN:
         return (<div className={styles.gameBox}>SNAKE_WIN</div>);
-      case SNAKE_GAME_OVER:
-        return (<div className={styles.gameBox}>SNAKE_GAME_OVER</div>);
     }
 
     return null;
