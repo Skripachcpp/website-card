@@ -7,6 +7,8 @@ import styles from './styles.module.sass';
 const AREA_X = 20;
 const AREA_Y = 20;
 
+const SNAKE_WIN_LENGTH = 399;
+
 const SNAKE_HEADER = 'SNAKE_HEADER';
 const SNAKE_BODY = 'SNAKE_BODY';
 const SNAKE_TAIL = 'SNAKE_TAIL';
@@ -18,7 +20,7 @@ const SNAKE_GO_DOWN = 'SNAKE_GO_DOWN';
 const SNAKE_GO_LEFT = 'SNAKE_GO_LEFT';
 const SNAKE_GO_RIGHT = 'SNAKE_GO_RIGHT';
 
-const TIK = 250;
+const TIK = 150;
 
 const mapStateToProps = (state) => ({
   keyboard: state.keyboard
@@ -35,36 +37,37 @@ class Matrix extends PureComponent {
     const SNAKE_DEFAULT_LENGTH = 3; // >= 3
     const SNAKE_DEFAULT_Y = 10;
     const SNAKE_DEFAULT_X = 10;
-    const snake = [];
 
-    let parent;
+    let first;
+    let last;
     for (let i = 0; i < SNAKE_DEFAULT_LENGTH; i++) {
       const block = {y: SNAKE_DEFAULT_Y + i, x: SNAKE_DEFAULT_X, code: SNAKE_BODY};
 
-      if (parent) {
-        block.parent = parent;
-        parent.children = block;
+      if (!first) {
+        first = block;
+      }
+
+      if (last) {
+        block.parent = last;
+        last.children = block;
       }
 
       block.code = SNAKE_BODY;
 
-      parent = block;
-      snake.push(block)
+      last = block;
     }
 
-    let first = snake[0];
-    let last = snake[snake.length - 1];
-
+    first.vector = SNAKE_GO_UP;
+    first.length = SNAKE_DEFAULT_LENGTH;
     first.code = SNAKE_HEADER;
     last.code = SNAKE_TAIL;
 
     first.last = last;
 
-    return snake;
+    return first;
   }
 
   data = {
-    vector: SNAKE_GO_UP,
     snake: Matrix.defaultSnake(),
     apple: {
       y: 2,
@@ -76,7 +79,7 @@ class Matrix extends PureComponent {
     if (snake === undefined) snake = this.data.snake;
 
     const areaHash = {};
-    let block = snake[0];
+    let block = snake;
     while (block) {
       const y = block.y;
       const x = block.x;
@@ -97,7 +100,14 @@ class Matrix extends PureComponent {
   };
 
   snakeGoLazily = (code) => {
-    this.data.vector = code;
+    if (this.data.snake.vector === SNAKE_GO_UP && code === SNAKE_GO_DOWN
+      || this.data.snake.vector === SNAKE_GO_DOWN && code === SNAKE_GO_UP
+      || this.data.snake.vector === SNAKE_GO_LEFT && code === SNAKE_GO_RIGHT
+      || this.data.snake.vector === SNAKE_GO_RIGHT && code === SNAKE_GO_LEFT) {
+      return;
+    }
+
+    this.data.snake.nextVector = code;
   };
 
   randomInteger = (min, max) => {
@@ -107,11 +117,11 @@ class Matrix extends PureComponent {
   };
 
   snakeGo = (code) => {
-    if (!code) code = this.data.vector;
+    if (!code) code = this.data.snake.nextVector || this.data.snake.vector;
 
     const snake = this.data.snake;
 
-    const first = snake[0];
+    const first = snake;
     const firstChildren = first.children;
     const last = first.last;
     const lastParent = last.parent;
@@ -119,8 +129,8 @@ class Matrix extends PureComponent {
     const {appleAreaHash} = this.state;
     if (appleAreaHash[first.y] && appleAreaHash[first.y][first.x]) {
       const apple = this.data.apple;
-      const appleY = this.randomInteger(0, AREA_Y);
-      const appleX = this.randomInteger(0, AREA_X);
+      const appleY = this.randomInteger(0, AREA_Y - 1);
+      const appleX = this.randomInteger(0, AREA_X - 1);
       this.data.apple = {...apple, y: appleY, x: appleX};
 
       this.setState({appleAreaHash: this.getAppleAreaHash()});
@@ -130,8 +140,8 @@ class Matrix extends PureComponent {
       block.children = firstChildren;
 
       first.children = block;
+      first.length += 1;
       firstChildren.parent = block;
-
     } else {
       last.code = SNAKE_BODY;
       lastParent.code = SNAKE_TAIL;
@@ -160,7 +170,7 @@ class Matrix extends PureComponent {
       first.x = first.x + 1;
 
     const snakeAreaHash = this.getSnakeAreaHash(snake);
-    const {onGameOver} = this.props;
+    const {onGameOver, onWin} = this.props;
     if (onGameOver) {
       if (first.y < 0 || first.x < 0)
         onGameOver();
@@ -175,7 +185,14 @@ class Matrix extends PureComponent {
       }
     }
 
-    this.data.vector = code;
+    if (onWin) {
+      if (first.length >= SNAKE_WIN_LENGTH) {
+        onWin();
+      }
+    }
+
+    this.data.snake.vector = code;
+    this.data.snake.nextVector = undefined;
     this.setState({snakeAreaHash});
   };
 
@@ -193,24 +210,21 @@ class Matrix extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const {keyboard: {keyCode: newKeyCode}} = nextProps;
-    const {keyboard: {keyCode: oldKeyCode}} = this.props;
+    const {keyboard: {keyCode}} = nextProps;
 
-    if (newKeyCode !== oldKeyCode) {
-      switch (newKeyCode) {
-        case 87:
-          this.data.vector = SNAKE_GO_UP;
-          break;
-        case 65:
-          this.data.vector = SNAKE_GO_LEFT;
-          break;
-        case 83:
-          this.data.vector = SNAKE_GO_DOWN;
-          break;
-        case 68:
-          this.data.vector = SNAKE_GO_RIGHT;
-          break;
-      }
+    switch (keyCode) {
+      case 87:
+        this.snakeGoLazily(SNAKE_GO_UP);
+        break;
+      case 65:
+        this.snakeGoLazily(SNAKE_GO_LEFT);
+        break;
+      case 83:
+        this.snakeGoLazily(SNAKE_GO_DOWN);
+        break;
+      case 68:
+        this.snakeGoLazily(SNAKE_GO_RIGHT);
+        break;
     }
   }
 
